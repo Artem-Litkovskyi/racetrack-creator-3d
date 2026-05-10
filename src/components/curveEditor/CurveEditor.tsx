@@ -12,6 +12,7 @@ import { createPitchHandle } from '../../handles/PitchHandle.ts';
 import { createPosXYHandle } from '../../handles/PosXYHandle.ts';
 import { createPosZHandle } from '../../handles/PosZHandle.ts';
 import { createTangentHandle } from '../../handles/TangentHandle.ts';
+import { createWidthHandle } from '../../handles/WidthHandle.ts';
 import { CurveEditorControlHints } from './CurveEditorControlHints.tsx';
 import { CurveEditorGrid } from './CurveEditorGrid.tsx';
 
@@ -20,6 +21,7 @@ import { usePanZoom } from '../../hooks/usePanZoom.ts';
 import { useProjectContext } from '../../hooks/useProjectContext.ts';
 
 import { createCurveNode3, getCurveBoundingBox3 } from '../../geometry/curveNode.ts';
+import { add2, diff2, normalize2, perpendicular, scale2 } from '../../geometry/vec2.ts';
 import { createVec3 } from '../../geometry/vec3.ts';
 
 import { curveWorldToSvg, getFitPanZoom, screenToWorld } from '../../utils/svg.ts';
@@ -29,6 +31,7 @@ export function CurveEditor() {
         project: { closedPath, roadWidth, curveNodes },
         selectedNode,
         setSelectedNode,
+        updateRoadWidth,
         updateNode,
         addNode,
         removeNode,
@@ -42,7 +45,7 @@ export function CurveEditor() {
     const fitToScreen = () => {
         if (!svg) return;
         const { min, max } = getCurveBoundingBox3(curveNodes);
-        setPanZoom(getFitPanZoom(min.x, min.y, max.x, max.y, svg.clientWidth, svg.clientHeight, roadWidth));
+        setPanZoom(getFitPanZoom(min.x, min.y, max.x, max.y, svg.clientWidth, svg.clientHeight, roadWidth[0]));  // TODO: roadWidth[]
     }
 
     // Coordinates convertion
@@ -50,6 +53,21 @@ export function CurveEditor() {
         if (!svg) return curveNodes;
         return curveWorldToSvg(curveNodes, svg.clientHeight, panZoom);
     }, [curveNodes, svg, panZoom]);
+
+    const selectedRight =
+        selectedNode != null
+            ? normalize2(perpendicular(diff2(curveNodes[selectedNode].tangentEnd1, curveNodes[selectedNode].position)))
+            : null;
+
+    const selectedRightConverted =
+        selectedNode != null
+            ? normalize2(perpendicular(diff2(convertedNodes[selectedNode].tangentEnd1, convertedNodes[selectedNode].position)))
+            : null;
+
+    const selectedRightConvertedScaled =
+        selectedNode != null && selectedRightConverted != null
+            ? scale2(selectedRightConverted, roadWidth[selectedNode] * panZoom.zoom)
+            : null;
 
     // Drag handling
     const { onHandleDragStart, bind: handleDragBind } = useHandleDrag(svg, panZoom);
@@ -142,7 +160,7 @@ export function CurveEditor() {
                                 className={'curve-path'}
                                 key={`section-${i}`}
                                 curveNodes={[n0, convertedNodes[i+1]]}
-                                curveWidth={roadWidth * panZoom.zoom}
+                                curveWidth={roadWidth[0] * panZoom.zoom}  // TODO: roadWidth[]
                                 onMouseDown={(e) => onPathDragStart(i+1, e)}
                             />
 
@@ -152,7 +170,7 @@ export function CurveEditor() {
                                     key={`connector-${i}`}
                                     cx={n0.position.x}
                                     cy={n0.position.y}
-                                    r={roadWidth * panZoom.zoom / 2}
+                                    r={roadWidth[0] * panZoom.zoom / 2}  // TODO: roadWidth[]
                                 />
                             )}
                         </>
@@ -163,13 +181,14 @@ export function CurveEditor() {
                             className={'curve-path closed'}
                             key={`section-${curveNodes.length - 1}`}
                             curveNodes={[convertedNodes[curveNodes.length - 1], convertedNodes[0]]}
-                            curveWidth={roadWidth * panZoom.zoom}
+                            curveWidth={roadWidth[0] * panZoom.zoom}  // TODO: roadWidth[]
                             onMouseDown={(e) => onPathDragStart(curveNodes.length, e)}
                         />
                     )}
 
                     {convertedNodes.map((node, index) => (
                         <g key={index}>
+                            {/* Z position label */}
                             {panZoom.zoom > 0.5 && (
                                 <text
                                     className={'node-label'}
@@ -181,8 +200,10 @@ export function CurveEditor() {
                                 </text>
                             )}
 
-                            {index === selectedNode && (
+                            {/* Selected node */}
+                            {index === selectedNode && selectedRight && selectedRightConvertedScaled && (
                                 <>
+                                    {/* Tangent handles */}
                                     <ArmHandle
                                         className={'tangent-handle'}
                                         svgKey={`tangent1-handle-${index}`}
@@ -203,6 +224,28 @@ export function CurveEditor() {
                                             createTangentHandle(index, updateNode, 'tangentEnd2'), e)}
                                     />
 
+                                    {/* Road width handles */}
+                                    <ArmHandle
+                                        className={'width-handle'}
+                                        svgKey={`width-handle1-${index}`}
+                                        label={'w'}
+                                        origin={node.position}
+                                        end={add2(node.position, selectedRightConvertedScaled)}
+                                        onMouseDown={(e) => onHandleDragStart(
+                                            createWidthHandle(index, selectedRight, true, updateRoadWidth), e)}
+                                    />
+
+                                    <ArmHandle
+                                        className={'width-handle'}
+                                        svgKey={`width-handle2-${index}`}
+                                        label={'w'}
+                                        origin={node.position}
+                                        end={diff2(node.position, selectedRightConvertedScaled)}
+                                        onMouseDown={(e) => onHandleDragStart(
+                                            createWidthHandle(index, selectedRight, false, updateRoadWidth), e)}
+                                    />
+
+                                    {/* Pos Z handle */}
                                     <ArrowUpHandle
                                         className={`pos-z-handle ${posZHandleSelected && 'selected'}`}
                                         svgKey={`pos-z-handle-${index}`}
@@ -216,6 +259,7 @@ export function CurveEditor() {
                                             ), e)}
                                     />
 
+                                    {/* Pitch handle */}
                                     <RotateHorizontalHandle
                                         className={`pitch-handle ${pitchHandleSelected && 'selected'}`}
                                         svgKey={`pitch-handle-${index}`}
@@ -231,6 +275,7 @@ export function CurveEditor() {
                                 </>
                             )}
 
+                            {/* Node circle */}
                             <PointHandle
                                 className={`pos-xy-handle ${index === selectedNode ? 'selected' : ''}`}
                                 svgKey={`pos-xy-handle-${index}`}

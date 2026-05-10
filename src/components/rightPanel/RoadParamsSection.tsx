@@ -5,7 +5,7 @@ import { useProjectContext } from '../../hooks/useProjectContext.ts';
 
 export function RoadParamsSection() {
     const {
-        project: { closedPath, roadWidth, sideHeight },
+        project: { closedPath, sideHeight },
         updateProject,
     } = useProjectContext();
     
@@ -22,16 +22,6 @@ export function RoadParamsSection() {
                         updateProject('closedPath', Boolean(e.target.checked))
                     }}
                 />}
-            />
-
-            <CustomInput
-                label='Road Width'
-                type='number'
-                placeholder='0'
-                value={roadWidth}
-                onChange={(e) => {
-                    updateProject('roadWidth', Math.max(1, Number(e.target.value)))
-                }}
             />
 
             <CustomInput

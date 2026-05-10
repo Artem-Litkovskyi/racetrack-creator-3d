@@ -2,21 +2,31 @@
 :root {
   --curve: #3c3c3c;
   --node: #eeeeee;
+  --grid: #eeeeee;
+
   --tangent: #4caf50;
+  --tangent-text: #eeeeee;
+
+  --width: #d32f2f;
+  --width-text: #eeeeee;
+
   --pos-z: #1976d2;
   --pitch: #ff9800;
-  --grid: #eeeeee;
-  --tangent-text: #eeeeee;
 }
 
 [data-dark] {
   --curve: #fff;
   --node: #707070;
+  --grid: #303030;
+
   --tangent: #7fbc82;
+  --tangent-text: #202020;
+
+  --width: #e57373;
+  --width-text: #202020;
+
   --pos-z: #53b5df;
   --pitch: #e8ac54;
-  --grid: #303030;
-  --tangent-text: #202020;
 }
 
 /* Reset */
@@ -84,6 +94,20 @@ circle.tangent-handle {
 
 text.tangent-handle {
   fill: var(--tangent-text);
+}
+
+/* Width Handle */
+line.width-handle {
+  stroke: var(--width);
+  stroke-width: 3;
+}
+
+circle.width-handle {
+  fill: var(--width);
+}
+
+text.width-handle {
+  fill: var(--width-text);
 }
 
 /* Arrow Up Handle */

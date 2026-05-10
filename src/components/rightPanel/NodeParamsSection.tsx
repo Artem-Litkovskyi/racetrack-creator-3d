@@ -15,8 +15,9 @@ import {
 
 export function NodeParamsSection() {
     const {
-        project: { curveNodes },
+        project: { roadWidth, curveNodes },
         selectedNode,
+        setRoadWidth,
         setNode,
     } = useProjectContext();
 
@@ -59,6 +60,16 @@ export function NodeParamsSection() {
                         value={getTangentPitch3(node)}
                         onChange={(e) => {
                             setNode(selectedNode, setCollinearTangentPitch3(node, Number(e.target.value)));
+                        }}
+                    />
+
+                    <CustomInput
+                        label='Road Width'
+                        type='number'
+                        placeholder='0'
+                        value={roadWidth[selectedNode]}
+                        onChange={(e) => {
+                            setRoadWidth(selectedNode, Math.max(1, Number(e.target.value)))
                         }}
                     />
                 </>

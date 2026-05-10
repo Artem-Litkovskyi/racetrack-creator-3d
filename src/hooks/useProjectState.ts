@@ -10,15 +10,15 @@ import { readProjectFile, writeProjectFile } from '../utils/projectFile.ts';
 
 export type ProjectData = {
     closedPath: boolean;
-    roadWidth: number;
     sideHeight: number;
+    roadWidth: number[];
     curveNodes: CurveNode3[];
 }
 
 export const DEFAULT_PROJECT_DATA: ProjectData = {
     closedPath: true,
-    roadWidth: 12,
     sideHeight: 2,
+    roadWidth: [12,12,12],
     curveNodes: [
         {
             position: { x: 100, y: 200, z: 0 },
@@ -72,7 +72,8 @@ export function useProjectState() {
     ) => {
         switch (extension) {
             case 'svg':
-                exportToSVG(project.curveNodes, project.closedPath, project.roadWidth, roadColor, exportFilename);
+                // TODO: roadWidth[]
+                exportToSVG(project.curveNodes, project.closedPath, project.roadWidth[0], roadColor, exportFilename);
                 break;
             default:
                 console.error(`Unsupported 2D export extension: ${extension}`);
@@ -85,7 +86,8 @@ export function useProjectState() {
         extension: ExtensionType,
         resolution: number,
     ) => {
-        const { crossSection, skipPoligonIdx } = generateRoadCrossSection(project.roadWidth, project.sideHeight);
+        // TODO: roadWidth[]
+        const { crossSection, skipPoligonIdx } = generateRoadCrossSection(project.roadWidth[0], project.sideHeight);
         const { vertices, indices } = generateSweptSurfaceMesh(
             project.curveNodes, crossSection, resolution, project.closedPath, skipPoligonIdx);
 
@@ -119,6 +121,26 @@ export function useProjectState() {
     ) => {
         setProject(p => ({ ...p, [key]: value }));
         setDirty(true);
+    };
+
+    const updateRoadWidth = (
+        index: number,
+        updater: (prev: number) => number
+    ) => {
+        setProject(prev => ({
+            ...prev,
+            roadWidth: prev.roadWidth.map((width, i) =>
+                i === index ? updater(width) : width
+            ),
+        }));
+        setDirty(true);
+    };
+
+    const setRoadWidth = (
+        index: number,
+        newWidth: number
+    ) => {
+        updateRoadWidth(index, _ => newWidth);
     };
 
     const updateNode = (
@@ -166,16 +188,21 @@ export function useProjectState() {
         dirty,
         project,
         selectedNode,
+
         setFilename,
         setDirty,
         setProject,
         setSelectedNode,
+
         newProject,
         openProject,
         saveProject,
         exportProject2D,
         exportProject3D,
+
         updateProject,
+        updateRoadWidth,
+        setRoadWidth,
         updateNode,
         setNode,
         addNode,

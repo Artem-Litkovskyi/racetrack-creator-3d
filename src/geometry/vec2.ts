@@ -35,3 +35,12 @@ export function scale2(v: Vec2, k: number) {
         y: v.y * k,
     };
 }
+
+export function dot2(v1: Vec2, v2: Vec2) {
+    return v1.x * v2.x + v1.y * v2.y;
+}
+
+export function perpendicular(v: Vec2, clockwise: boolean = false) {
+    // noinspection JSSuspiciousNameCombination
+    return clockwise ? { x: v.y, y: -v.x, } : { x: -v.y, y: v.x, };
+}
