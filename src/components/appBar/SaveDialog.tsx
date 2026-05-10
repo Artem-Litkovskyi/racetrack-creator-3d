@@ -29,6 +29,7 @@ export function SaveDialog(props: SaveDialogProps) {
 
             <DialogContentWithGap>
                 <CustomInput
+                    id={'save-filename-input'}
                     label='Filename'
                     placeholder='untitled'
                     value={props.filename}

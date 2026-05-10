@@ -3,7 +3,7 @@ import { sampleCurve3 } from './sampleCurve3';
 import { type Vec2 } from './vec2.ts';
 import { type Vec3 } from './vec3.ts';
 
-export function generateSweptSurfaceMesh(
+export function generateSweepSurfaceMesh(
     curveNodes: CurveNode3[],
     curveWidths: number[],
     closedPath: boolean,

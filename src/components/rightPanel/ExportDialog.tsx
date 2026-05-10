@@ -39,12 +39,14 @@ export function ExportDialog(props: ExportDialogProps) {
 
             <DialogContentWithGap>
                 <FilenameAndExtensionInput
+                    id={'export-filename-extension-input'}
                     label='Filename and Format'
                     filename={props.filename} setFilename={props.setFilename}
                     extension={props.extension} setExtension={props.setExtension}
                 />
 
                 <CustomInput
+                    id={'export-resolution-input'}
                     label='Resolution (Cross-Sections per Curve Segment)'
                     type='number'
                     placeholder='0'
@@ -55,6 +57,7 @@ export function ExportDialog(props: ExportDialogProps) {
 
                 {props.extension === 'svg' && (
                     <ColorPicker
+                        id={'export-road-color-input'}
                         label={'Road Color'}
                         value={props.roadColor}
                         onChange={props.setRoadColor}

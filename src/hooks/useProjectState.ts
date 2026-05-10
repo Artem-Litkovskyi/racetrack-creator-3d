@@ -2,7 +2,7 @@ import { useState } from 'react';
 import path from 'path-browserify';
 
 import { type CurveNode3 } from '../geometry/curveNode.ts';
-import { generateRoadProfile, generateSweptSurfaceMesh } from '../geometry/mesh.ts';
+import { generateRoadProfile, generateSweepSurfaceMesh } from '../geometry/mesh.ts';
 import { convertCoordinateSystem3 } from '../geometry/vec3.ts';
 
 import { COORDINATE_SYSTEMS, exportToGLTF, exportToOBJ, exportToSVG, type ExtensionType } from '../utils/export.ts';
@@ -10,14 +10,14 @@ import { readProjectFile, writeProjectFile } from '../utils/projectFile.ts';
 
 export type ProjectData = {
     closedPath: boolean;
-    sideHeight: number;
+    profileHeight: number;
     curveNodes: CurveNode3[];
     roadWidths: number[];
 }
 
 export const DEFAULT_PROJECT_DATA: ProjectData = {
     closedPath: true,
-    sideHeight: 2,
+    profileHeight: 2,
     curveNodes: [
         {
             position: { x: 100, y: 200, z: 0 },
@@ -48,6 +48,7 @@ export function useProjectState() {
     const newProject = () => {
         setProject(DEFAULT_PROJECT_DATA);
         setFilename('untitled');
+        setSelectedNode(null);
         setDirty(false);
     };
 
@@ -55,6 +56,7 @@ export function useProjectState() {
         const data = await readProjectFile(file);
         setProject(data);
         setFilename(path.basename(file.name, '.json'));
+        setSelectedNode(null);
         setDirty(false);
     };
 
@@ -86,8 +88,8 @@ export function useProjectState() {
         extension: ExtensionType,
         resolution: number,
     ) => {
-        const { roadProfile, skipPoligonIdx } = generateRoadProfile(1, project.sideHeight);
-        const { vertices, indices } = generateSweptSurfaceMesh(project.curveNodes, project.roadWidths, project.closedPath, roadProfile, resolution, skipPoligonIdx);
+        const { roadProfile, skipPoligonIdx } = generateRoadProfile(1, project.profileHeight);
+        const { vertices, indices } = generateSweepSurfaceMesh(project.curveNodes, project.roadWidths, project.closedPath, roadProfile, resolution, skipPoligonIdx);
 
         const from = COORDINATE_SYSTEMS.editor;
         const to = COORDINATE_SYSTEMS.file;
@@ -183,6 +185,7 @@ export function useProjectState() {
         setProject(prev => ({
             ...prev,
             curveNodes: prev.curveNodes.toSpliced(index, 1),
+            roadWidths: prev.roadWidths.toSpliced(index, 1),
         }));
         setDirty(true);
     };

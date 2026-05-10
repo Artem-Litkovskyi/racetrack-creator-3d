@@ -30,24 +30,28 @@ export function NodeParamsSection() {
             {selectedNode != null && node ? (
                 <>
                     <Vec3Input
+                        id={'node-position-input'}
                         label='Node Position'
                         value={node.position}
                         setValue={v => setNode(selectedNode, setNodePosition3(node, v))}
                     />
 
                     <Vec3Input
+                        id={'tangent1-end-input'}
                         label='Tangent 1 End'
                         value={node.tangentEnd1}
                         setValue={v => setNode(selectedNode, setCollinearTangentEnd3(node, 'tangentEnd1', v))}
                     />
 
                     <Vec3Input
+                        id={'tangent2-end-input'}
                         label='Tangent 2 End'
                         value={node.tangentEnd2}
                         setValue={v => setNode(selectedNode, setCollinearTangentEnd3(node, 'tangentEnd2', v))}
                     />
 
                     <CustomInput
+                        id={'pitch-input'}
                         label='Pitch'
                         type='number'
                         placeholder='0'
@@ -64,6 +68,7 @@ export function NodeParamsSection() {
                     />
 
                     <CustomInput
+                        id={'road-width-input'}
                         label='Road Width'
                         type='number'
                         placeholder='0'

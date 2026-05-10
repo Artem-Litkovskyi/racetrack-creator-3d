@@ -5,7 +5,7 @@ import { useProjectContext } from '../../hooks/useProjectContext.ts';
 
 export function RoadParamsSection() {
     const {
-        project: { closedPath, sideHeight },
+        project: { closedPath, profileHeight },
         updateProject,
     } = useProjectContext();
     
@@ -25,12 +25,13 @@ export function RoadParamsSection() {
             />
 
             <CustomInput
-                label='Side Height'
+                id={'profile-height-input'}
+                label='Profile Height'
                 type='number'
                 placeholder='0'
-                value={sideHeight}
+                value={profileHeight}
                 onChange={(e) => {
-                    updateProject('sideHeight', Math.max(0.25, Number(e.target.value)))
+                    updateProject('profileHeight', Math.max(0.25, Number(e.target.value)))
                 }}
             />
         </PanelSection>

@@ -192,7 +192,7 @@ export function CurveEditor() {
                                     x={node.position.x + 20}
                                     y={node.position.y + 5}
                                 >
-                                    height: {Math.round(curveNodes[index].position.z)}
+                                    height: {curveNodes[index].position.z.toFixed(1)}
                                 </text>
                             )}
 

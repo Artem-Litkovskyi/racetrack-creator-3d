@@ -134,7 +134,7 @@ export function setCollinearTangentPitch3(node: CurveNode3, pitch: number): Curv
 }
 
 // Other
-export function makeCurveNodeValid3(node: CurveNode3, minMag: number = 10): CurveNode3 {
+export function makeCurveNodeValid3(node: CurveNode3, minMag: number = 5): CurveNode3 {
     const isZero1 = magnitude3(diff3(node.tangentEnd1, node.position)) < minMag;
     const isZero2 = magnitude3(diff3(node.tangentEnd2, node.position)) < minMag;
 

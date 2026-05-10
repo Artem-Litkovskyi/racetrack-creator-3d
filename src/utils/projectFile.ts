@@ -16,9 +16,9 @@ const CurveNode3Schema = z.object({
 
 const ProjectDataSchema = z.object({
     closedPath: z.boolean(),
-    roadWidth: z.number(),
     sideHeight: z.number(),
     curveNodes: z.array(CurveNode3Schema),
+    roadWidths: z.array(z.number()),
 })
 
 export function writeProjectFile(data: ProjectData, filename: string) {

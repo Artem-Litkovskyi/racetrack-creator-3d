@@ -3,6 +3,7 @@ import { HorizontalBoxWithGap } from '../MuiWrappers.tsx';
 import type { ExtensionType } from '../../utils/export.ts';
 
 interface FilenameAndExtensionInputProps {
+    id: string,
     label?: string;
     filename: string;
     setFilename: (value: string) => void;
@@ -13,10 +14,11 @@ interface FilenameAndExtensionInputProps {
 export function FilenameAndExtensionInput(props: FilenameAndExtensionInputProps) {
     return (
         <FormGroup>
-            <FormLabel className='input-label'>{props.label}</FormLabel>
+            <FormLabel htmlFor={props.id} className='input-label'>{props.label}</FormLabel>
 
             <HorizontalBoxWithGap>
                 <TextField
+                    id={props.id}
                     placeholder='filename'
                     value={props.filename}
                     onChange={(e) => props.setFilename(e.target.value)}

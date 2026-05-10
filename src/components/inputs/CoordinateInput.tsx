@@ -1,14 +1,16 @@
 import { InputAdornment, TextField, Typography } from '@mui/material';
 
 interface CoordinateInputProps {
+    id: string,
     label?: string;
     value: number;
     setValue: (value: number) => void;
 }
 
-export function CoordinateInput({ label, value, setValue }: CoordinateInputProps) {
+export function CoordinateInput({ id, label, value, setValue }: CoordinateInputProps) {
     return (
         <TextField
+            id={id}
             type='number'
             placeholder='0'
             value={value}

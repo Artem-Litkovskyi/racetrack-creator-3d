@@ -11,13 +11,14 @@ import {
 import { HexColorPicker } from 'react-colorful';
 
 interface ColorPickerProps {
+    id: string;
     label?: string;
     value: string;
     onChange: (color: string) => void;
     disabled?: boolean;
 }
 
-export function ColorPicker({ label = 'Color', value, onChange, disabled = false }: ColorPickerProps) {
+export function ColorPicker({ id, label = 'Color', value, onChange, disabled = false }: ColorPickerProps) {
     const [open, setOpen] = useState(false);
     const anchorRef = useRef<HTMLButtonElement | null>(null);
 
@@ -41,8 +42,9 @@ export function ColorPicker({ label = 'Color', value, onChange, disabled = false
 
     return (
         <FormGroup>
-            <FormLabel className='input-label'>{label}</FormLabel>
+            <FormLabel htmlFor={id} className='input-label'>{label}</FormLabel>
             <TextField
+                id={id}
                 value={value}
                 disabled={disabled}
                 onChange={handleTextChange}

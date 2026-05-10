@@ -10,7 +10,7 @@
   --width: #d32f2f;
   --width-text: #eeeeee;
 
-  --pos-z: #1976d2;
+  --pos-z: #42a5f5;
   --pitch: #ff9800;
 }
 
@@ -25,7 +25,7 @@
   --width: #e57373;
   --width-text: #202020;
 
-  --pos-z: #53b5df;
+  --pos-z: #32ace4;
   --pitch: #e8ac54;
 }
 
@@ -65,7 +65,7 @@ text {
 }
 
 .curve-path.closed {
-  opacity: 0.25;
+  opacity: 0.33;
 }
 
 /* Pos XY Handle */
