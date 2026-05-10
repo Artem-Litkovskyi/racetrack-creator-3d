@@ -59,16 +59,13 @@ text {
 
 /* Curve Path */
 .curve-path {
-  fill: none;
+  fill: var(--curve);
   stroke: var(--curve);
+  stroke-width: 2;
 }
 
 .curve-path.closed {
   opacity: 0.25;
-}
-
-.curve-path-connector {
-  fill: var(--curve);
 }
 
 /* Pos XY Handle */

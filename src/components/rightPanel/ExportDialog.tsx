@@ -44,20 +44,20 @@ export function ExportDialog(props: ExportDialogProps) {
                     extension={props.extension} setExtension={props.setExtension}
                 />
 
-                {props.extension === 'svg' ? (
+                <CustomInput
+                    label='Resolution (Cross-Sections per Curve Segment)'
+                    type='number'
+                    placeholder='0'
+                    value={props.resolution}
+                    onChange={(e) => props.setResolution(
+                        Math.max(5, Number(e.target.value)))}
+                />
+
+                {props.extension === 'svg' && (
                     <ColorPicker
                         label={'Road Color'}
                         value={props.roadColor}
                         onChange={props.setRoadColor}
-                    />
-                ) : (
-                    <CustomInput
-                        label='Resolution (Cross-Sections per Segment)'
-                        type='number'
-                        placeholder='0'
-                        value={props.resolution}
-                        onChange={(e) => props.setResolution(
-                            Math.max(5, Number(e.target.value)))}
                     />
                 )}
             </DialogContentWithGap>

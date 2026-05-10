@@ -68,13 +68,17 @@ export function exportToGLTF(vertices: number[], indices: number[], filename: st
     );
 }
 
-export function exportToSVG(curveNodes: CurveNode3[], closedPath: boolean, roadWidth: number, color: string, filename: string) {
+export function exportToSVG(
+    curveNodes: CurveNode3[], curveWidths: number[], closedPath: boolean,
+    resolution: number, color: string, filename: string
+) {
     const { min, max } = getCurveBoundingBox3(curveNodes);
+    const maxWidth = Math.max(...curveWidths);
 
-    const minX = min.x - roadWidth;
-    const minY = min.y - roadWidth;
-    const maxX = max.x + roadWidth;
-    const maxY = max.y + roadWidth;
+    const minX = min.x - maxWidth;
+    const minY = min.y - maxWidth;
+    const maxX = max.x + maxWidth;
+    const maxY = max.y + maxWidth;
 
     const canvasWidth = maxX - minX;
     const canvasHeight = maxY - minY;
@@ -87,17 +91,19 @@ export function exportToSVG(curveNodes: CurveNode3[], closedPath: boolean, roadW
 
     const curveNodes2 = curveWorldToSvg(curveNodes, canvasHeight, panZoom);
 
-    const d = curveToPathCommands(curveNodes2, closedPath);
+    const d = curveToPathCommands(curveNodes2, curveWidths, closedPath, resolution);
 
     const result = `
-        <svg xmlns='http://www.w3.org/2000/svg'
-             width='${canvasWidth}'
-             height='${canvasHeight}'
-             viewBox='0 0 ${canvasWidth} ${canvasHeight}'>
-          <path d='${d}'
-                fill='none'
-                stroke='${color}'
-                stroke-width='${roadWidth}'/>
+        <svg
+            xmlns='http://www.w3.org/2000/svg'
+            width='${canvasWidth}'
+            height='${canvasHeight}'
+            viewBox='0 0 ${canvasWidth} ${canvasHeight}'
+        >
+            <path
+                d='${d}'
+                fill='${color}'
+            />
         </svg>
     `.trim();
 

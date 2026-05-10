@@ -1,4 +1,6 @@
 import type { CurveNode2, CurveNode3 } from '../geometry/curveNode.ts';
+import { sampleCurve2 } from '../geometry/sampleCurve2.ts';
+import { add2, diff2 } from '../geometry/vec2.ts';
 
 export type PanZoom = {
     panX: number,
@@ -108,28 +110,65 @@ export function getFitPanZoom(
 }
 
 // SVG Commands
-export function curveSectionToPathCommand(n0: CurveNode2, n1: CurveNode2) {
-    return `C ${n0.tangentEnd2.x},${n0.tangentEnd2.y}
-            ${n1.tangentEnd1.x},${n1.tangentEnd1.y}
-            ${n1.position.x},${n1.position.y}`;
-}
-
-export function curveToPathCommands(curveNodes: CurveNode2[], closedPath: boolean = false) {
+export function curveSegmentToPathCommands(
+    curveNode1: CurveNode2, curveNode2: CurveNode2,
+    curveWidth1: number, curveWidth2: number,
+    resolution: number,
+) {
     const commands: string[] = [];
 
-    commands.push(`M ${curveNodes[0].position.x},${curveNodes[0].position.y}`);
+    const segmentNodes = [curveNode1, curveNode2];
+    const segmentWidths = [curveWidth1 / 2, curveWidth2 / 2];
 
-    for (let i = 0; i < curveNodes.length - 1; i++) {
-        const n0 = curveNodes[i];
-        const n1 = curveNodes[i + 1];
-        commands.push(curveSectionToPathCommand(n0, n1));
+    const segmentFrames = sampleCurve2(segmentNodes, segmentWidths, false, resolution);
+
+    // Left side
+    const firstLeft = diff2(
+        segmentFrames[0].position, segmentFrames[0].right);
+
+    commands.push(`M ${firstLeft.x} ${firstLeft.y}`);
+
+    for (let j = 1; j < segmentFrames.length; j++) {
+        const p = diff2(segmentFrames[j].position, segmentFrames[j].right);
+        commands.push(`L ${p.x} ${p.y}`);
     }
 
-    if (closedPath) {
-        const n0 = curveNodes[curveNodes.length - 1];
-        const n1 = curveNodes[0];
-        commands.push(curveSectionToPathCommand(n0, n1));
-        commands.push('Z');
+    // Right side
+    const lastRight = add2(
+        segmentFrames[segmentFrames.length - 1].position, segmentFrames[segmentFrames.length - 1].right);
+
+    commands.push(`L ${lastRight.x} ${lastRight.y}`);
+
+    for (let j = segmentFrames.length - 2; j >= 0; j--) {
+        const p = add2(segmentFrames[j].position, segmentFrames[j].right);
+        commands.push(`L ${p.x} ${p.y}`);
+    }
+
+    commands.push(`Z`)
+
+    return commands.join(' ');
+}
+
+export function curveToPathCommands(
+    curveNodes: CurveNode2[],
+    curveWidths: number[],
+    closedPath: boolean,
+    resolution: number,
+) {
+    const commands: string[] = [];
+
+    const segmentCount = closedPath
+        ? curveNodes.length
+        : curveNodes.length - 1;
+
+    for (let i = 0; i < segmentCount; i++) {
+        const next = (i + 1) % curveNodes.length;
+
+        commands.push(curveSegmentToPathCommands(
+            curveNodes[i], curveNodes[next],
+            curveWidths[i], curveWidths[next],
+            resolution,
+        ))
     }
 
     return commands.join(' ');

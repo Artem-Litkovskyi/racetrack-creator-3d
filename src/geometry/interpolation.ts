@@ -1,5 +1,7 @@
+import type { Vec2 } from './vec2.ts';
 import type { Vec3 } from './vec3.ts';
 
+// 1D
 export function cubicBezier(p0: number, p1: number, p2: number, p3: number, t: number): number {
     const u = 1 - t;
 
@@ -17,6 +19,22 @@ export function cubicBezierDerivative(p0: number, p1: number, p2: number, p3: nu
         3 * t * t * (p3 - p2);
 }
 
+// 2D
+export function cubicBezier2(p0: Vec2, p1: Vec2, p2: Vec2, p3: Vec2, t: number): Vec2 {
+    return {
+        x: cubicBezier(p0.x, p1.x, p2.x, p3.x, t),
+        y: cubicBezier(p0.y, p1.y, p2.y, p3.y, t),
+    };
+}
+
+export function cubicBezierDerivative2(p0: Vec2, p1: Vec2, p2: Vec2, p3: Vec2, t: number): Vec2 {
+    return {
+        x: cubicBezierDerivative(p0.x, p1.x, p2.x, p3.x, t),
+        y: cubicBezierDerivative(p0.y, p1.y, p2.y, p3.y, t),
+    };
+}
+
+// 3D
 export function cubicBezier3(p0: Vec3, p1: Vec3, p2: Vec3, p3: Vec3, t: number): Vec3 {
     return {
         x: cubicBezier(p0.x, p1.x, p2.x, p3.x, t),

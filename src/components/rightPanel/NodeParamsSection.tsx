@@ -15,7 +15,7 @@ import {
 
 export function NodeParamsSection() {
     const {
-        project: { roadWidth, curveNodes },
+        project: { roadWidths, curveNodes },
         selectedNode,
         setRoadWidth,
         setNode,
@@ -67,7 +67,7 @@ export function NodeParamsSection() {
                         label='Road Width'
                         type='number'
                         placeholder='0'
-                        value={roadWidth[selectedNode]}
+                        value={roadWidths[selectedNode]}
                         onChange={(e) => {
                             setRoadWidth(selectedNode, Math.max(1, Number(e.target.value)))
                         }}

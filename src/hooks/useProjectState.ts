@@ -2,7 +2,7 @@ import { useState } from 'react';
 import path from 'path-browserify';
 
 import { type CurveNode3 } from '../geometry/curveNode.ts';
-import { generateRoadCrossSection, generateSweptSurfaceMesh } from '../geometry/mesh.ts';
+import { generateRoadProfile, generateSweptSurfaceMesh } from '../geometry/mesh.ts';
 import { convertCoordinateSystem3 } from '../geometry/vec3.ts';
 
 import { COORDINATE_SYSTEMS, exportToGLTF, exportToOBJ, exportToSVG, type ExtensionType } from '../utils/export.ts';
@@ -11,14 +11,13 @@ import { readProjectFile, writeProjectFile } from '../utils/projectFile.ts';
 export type ProjectData = {
     closedPath: boolean;
     sideHeight: number;
-    roadWidth: number[];
     curveNodes: CurveNode3[];
+    roadWidths: number[];
 }
 
 export const DEFAULT_PROJECT_DATA: ProjectData = {
     closedPath: true,
     sideHeight: 2,
-    roadWidth: [12,12,12],
     curveNodes: [
         {
             position: { x: 100, y: 200, z: 0 },
@@ -35,7 +34,8 @@ export const DEFAULT_PROJECT_DATA: ProjectData = {
             tangentEnd1: { x: 450, y: 300, z: 0 },
             tangentEnd2: { x: 550, y: 100, z: 0 },
         },
-    ]
+    ],
+    roadWidths: [12,12,12]
 }
 
 export function useProjectState() {
@@ -68,12 +68,12 @@ export function useProjectState() {
     const exportProject2D = (
         exportFilename: string,
         extension: ExtensionType,
+        resolution: number,
         roadColor: string,
     ) => {
         switch (extension) {
             case 'svg':
-                // TODO: roadWidth[]
-                exportToSVG(project.curveNodes, project.closedPath, project.roadWidth[0], roadColor, exportFilename);
+                exportToSVG(project.curveNodes, project.roadWidths, project.closedPath, resolution, roadColor, exportFilename);
                 break;
             default:
                 console.error(`Unsupported 2D export extension: ${extension}`);
@@ -86,10 +86,8 @@ export function useProjectState() {
         extension: ExtensionType,
         resolution: number,
     ) => {
-        // TODO: roadWidth[]
-        const { crossSection, skipPoligonIdx } = generateRoadCrossSection(project.roadWidth[0], project.sideHeight);
-        const { vertices, indices } = generateSweptSurfaceMesh(
-            project.curveNodes, crossSection, resolution, project.closedPath, skipPoligonIdx);
+        const { roadProfile, skipPoligonIdx } = generateRoadProfile(1, project.sideHeight);
+        const { vertices, indices } = generateSweptSurfaceMesh(project.curveNodes, project.roadWidths, project.closedPath, roadProfile, resolution, skipPoligonIdx);
 
         const from = COORDINATE_SYSTEMS.editor;
         const to = COORDINATE_SYSTEMS.file;
@@ -129,7 +127,7 @@ export function useProjectState() {
     ) => {
         setProject(prev => ({
             ...prev,
-            roadWidth: prev.roadWidth.map((width, i) =>
+            roadWidths: prev.roadWidths.map((width, i) =>
                 i === index ? updater(width) : width
             ),
         }));
@@ -164,12 +162,18 @@ export function useProjectState() {
     };
 
     const addNode = (node: CurveNode3, index?: number) => {
+        const insertIndex = index ?? project.curveNodes.length;
         setProject(prev => ({
             ...prev,
             curveNodes: prev.curveNodes.toSpliced(
-                index ?? prev.curveNodes.length,
+                insertIndex,
                 0,
                 node
+            ),
+            roadWidths: prev.roadWidths.toSpliced(
+                insertIndex,
+                0,
+                prev.roadWidths[insertIndex - 1]
             ),
         }));
         setDirty(true);

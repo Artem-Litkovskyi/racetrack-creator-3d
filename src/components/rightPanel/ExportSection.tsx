@@ -28,7 +28,7 @@ export function ExportSection() {
 
     const handleConfirm = () => {
         if (extension === 'svg') {
-            projectContext.exportProject2D(filename, extension, roadColor);
+            projectContext.exportProject2D(filename, extension, resolution, roadColor);
         } else {
             projectContext.exportProject3D(filename, extension, resolution);
         }

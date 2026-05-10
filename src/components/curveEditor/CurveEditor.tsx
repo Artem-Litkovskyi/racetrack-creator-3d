@@ -28,7 +28,7 @@ import { curveWorldToSvg, getFitPanZoom, screenToWorld } from '../../utils/svg.t
 
 export function CurveEditor() {
     const {
-        project: { closedPath, roadWidth, curveNodes },
+        project: { closedPath, roadWidths, curveNodes },
         selectedNode,
         setSelectedNode,
         updateRoadWidth,
@@ -45,7 +45,7 @@ export function CurveEditor() {
     const fitToScreen = () => {
         if (!svg) return;
         const { min, max } = getCurveBoundingBox3(curveNodes);
-        setPanZoom(getFitPanZoom(min.x, min.y, max.x, max.y, svg.clientWidth, svg.clientHeight, roadWidth[0]));  // TODO: roadWidth[]
+        setPanZoom(getFitPanZoom(min.x, min.y, max.x, max.y, svg.clientWidth, svg.clientHeight, Math.max(...roadWidths)));
     }
 
     // Coordinates convertion
@@ -53,6 +53,10 @@ export function CurveEditor() {
         if (!svg) return curveNodes;
         return curveWorldToSvg(curveNodes, svg.clientHeight, panZoom);
     }, [curveNodes, svg, panZoom]);
+
+    const convertedWidth = useMemo(() => {
+        return roadWidths.map(w => w * panZoom.zoom);
+    }, [roadWidths, panZoom.zoom]);
 
     const selectedRight =
         selectedNode != null
@@ -66,7 +70,7 @@ export function CurveEditor() {
 
     const selectedRightConvertedScaled =
         selectedNode != null && selectedRightConverted != null
-            ? scale2(selectedRightConverted, roadWidth[selectedNode] * panZoom.zoom)
+            ? scale2(selectedRightConverted, roadWidths[selectedNode] * panZoom.zoom)
             : null;
 
     // Drag handling
@@ -155,33 +159,25 @@ export function CurveEditor() {
                     )}
 
                     {convertedNodes.slice(0, -1).map((n0, i) => (
-                        <>
-                            <CurvePath
-                                className={'curve-path'}
-                                key={`section-${i}`}
-                                curveNodes={[n0, convertedNodes[i+1]]}
-                                curveWidth={roadWidth[0] * panZoom.zoom}  // TODO: roadWidth[]
-                                onMouseDown={(e) => onPathDragStart(i+1, e)}
-                            />
-
-                            {i !== 0 && (
-                                <circle
-                                    className={'curve-path-connector'}
-                                    key={`connector-${i}`}
-                                    cx={n0.position.x}
-                                    cy={n0.position.y}
-                                    r={roadWidth[0] * panZoom.zoom / 2}  // TODO: roadWidth[]
-                                />
-                            )}
-                        </>
+                        <CurvePath
+                            className={'curve-path'}
+                            key={`section-${i}`}
+                            curveNode1={n0}
+                            curveNode2={convertedNodes[i+1]}
+                            curveWidth1={convertedWidth[i]}
+                            curveWidth2={convertedWidth[i+1]}
+                            onMouseDown={(e) => onPathDragStart(i+1, e)}
+                        />
                     ))}
 
                     {closedPath && (
                         <CurvePath
                             className={'curve-path closed'}
                             key={`section-${curveNodes.length - 1}`}
-                            curveNodes={[convertedNodes[curveNodes.length - 1], convertedNodes[0]]}
-                            curveWidth={roadWidth[0] * panZoom.zoom}  // TODO: roadWidth[]
+                            curveNode1={convertedNodes[curveNodes.length - 1]}
+                            curveNode2={convertedNodes[0]}
+                            curveWidth1={convertedWidth[curveNodes.length - 1]}
+                            curveWidth2={convertedWidth[0]}
                             onMouseDown={(e) => onPathDragStart(curveNodes.length, e)}
                         />
                     )}
