@@ -1,5 +1,5 @@
 import type { CurveNode3 } from './curveNode';
-import { cubicBezier, cubicBezier3, cubicBezierDerivative3 } from './interpolation.ts';
+import { cubicBezier, cubicBezier3, cubicBezierDerivative3 } from './bezier.ts';
 import { cross3, normalize3, scale3, type Vec3 } from './vec3';
 
 export type Frame3 = {
@@ -9,7 +9,7 @@ export type Frame3 = {
     up: Vec3;
 }
 
-export function sampleCurveSegment3(
+export function sampleCurveSegmentFrames3(
     node1: CurveNode3, node2: CurveNode3,
     width1: number, width2: number,
     includeLast: boolean, resolution: number
@@ -35,7 +35,7 @@ export function sampleCurveSegment3(
     return axs;
 }
 
-export function sampleCurve3(
+export function sampleCurveFrames3(
     curveNodes: CurveNode3[], curveWidths: number[],
     closedPath: boolean, resolution: number
 ): Frame3[] {
@@ -52,7 +52,7 @@ export function sampleCurve3(
 
         const includeLast = i == segmentsNumber - 1 && !closedPath;
 
-        axs.push(...sampleCurveSegment3(node1, node2, width1, width2, includeLast, resolution));
+        axs.push(...sampleCurveSegmentFrames3(node1, node2, width1, width2, includeLast, resolution));
     }
 
     return axs;

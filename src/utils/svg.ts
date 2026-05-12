@@ -1,5 +1,5 @@
 import type { CurveNode2, CurveNode3 } from '../geometry/curveNode.ts';
-import { sampleCurve2 } from '../geometry/sampleCurve2.ts';
+import { sampleCurveFrames2 } from '../geometry/frame2.ts';
 import { add2, diff2 } from '../geometry/vec2.ts';
 
 export type PanZoom = {
@@ -120,7 +120,7 @@ export function curveSegmentToPathCommands(
     const segmentNodes = [curveNode1, curveNode2];
     const segmentWidths = [curveWidth1 / 2, curveWidth2 / 2];
 
-    const segmentFrames = sampleCurve2(segmentNodes, segmentWidths, false, resolution);
+    const segmentFrames = sampleCurveFrames2(segmentNodes, segmentWidths, resolution, false);
 
     // Left side
     const firstLeft = diff2(

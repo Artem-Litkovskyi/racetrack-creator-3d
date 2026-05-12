@@ -1,20 +1,20 @@
 import type { CurveNode3 } from './curveNode.ts';
-import { sampleCurve3 } from './sampleCurve3';
+import { sampleCurveFrames3 } from './frame3';
 import { type Vec2 } from './vec2.ts';
 import { type Vec3 } from './vec3.ts';
 
 export function generateSweepSurfaceMesh(
     curveNodes: CurveNode3[],
     curveWidths: number[],
-    closedPath: boolean,
     profile: Vec2[],
     resolution: number,
-    skipPoligonIdx?: number[]
+    closedPath: boolean,
+    skipPolygonIdx?: number[]
 ) {
     const vertices: Vec3[] = [];
     const indices: number[] = [];
 
-    const axs = sampleCurve3(curveNodes, curveWidths, closedPath, resolution);
+    const axs = sampleCurveFrames3(curveNodes, curveWidths, closedPath, resolution);
 
     const lastAxesIdx = axs.length - 1;
     const lastCrossSectionVertexIdx = profile.length - 1;
@@ -38,7 +38,7 @@ export function generateSweepSurfaceMesh(
 
             if (
                 !rightmostVertex
-                && (skipPoligonIdx == null || !skipPoligonIdx.includes(j))
+                && (skipPolygonIdx == null || !skipPolygonIdx.includes(j))
                 && (!currentRowIsLast || closedPath)
             ) {
                 const a = vertexIdx;
@@ -61,7 +61,7 @@ export function generateSweepSurfaceMesh(
 
 export function generateRoadProfile(width: number, height: number) {
     const halfWidth = width / 2;
-    const roadProfile: Vec2[] = [
+    const profile: Vec2[] = [
         { x: -halfWidth, y: -height },
         { x: -halfWidth, y: 0 },
         { x: -halfWidth, y: 0 },
@@ -69,6 +69,6 @@ export function generateRoadProfile(width: number, height: number) {
         { x: halfWidth, y: 0 },
         { x: halfWidth, y: -height },
     ];
-    const skipPoligonIdx: number[] = [1, 3];
-    return { roadProfile, skipPoligonIdx };
+    const skipPolygonIdx: number[] = [1, 3];
+    return { profile, skipPolygonIdx };
 }

@@ -88,8 +88,8 @@ export function useProjectState() {
         extension: ExtensionType,
         resolution: number,
     ) => {
-        const { roadProfile, skipPoligonIdx } = generateRoadProfile(1, project.profileHeight);
-        const { vertices, indices } = generateSweepSurfaceMesh(project.curveNodes, project.roadWidths, project.closedPath, roadProfile, resolution, skipPoligonIdx);
+        const { profile, skipPolygonIdx } = generateRoadProfile(1, project.profileHeight);
+        const { vertices, indices } = generateSweepSurfaceMesh(project.curveNodes, project.roadWidths, profile, resolution, project.closedPath, skipPolygonIdx);
 
         const from = COORDINATE_SYSTEMS.editor;
         const to = COORDINATE_SYSTEMS.file;
