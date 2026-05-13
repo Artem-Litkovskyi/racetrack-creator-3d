@@ -22,8 +22,10 @@ export function PointHandle({ className, svgKey, label, origin, onMouseDown }: P
             <text
                 className={className}
                 key={`${svgKey}-text`}
-                x={origin.x - 3.5}
-                y={origin.y + 4.5}
+                textAnchor='middle'
+                dominantBaseline='middle'
+                x={origin.x}
+                y={origin.y + 1}
                 fontSize={14}
             >
                 {label}
