@@ -31,7 +31,7 @@ export function RoadParamsSection() {
                 placeholder='0'
                 value={profileHeight}
                 onChange={(e) => {
-                    updateProject('profileHeight', Math.max(0.25, Number(e.target.value)))
+                    updateProject('profileHeight', Math.max(0, Number(e.target.value)))
                 }}
             />
         </PanelSection>

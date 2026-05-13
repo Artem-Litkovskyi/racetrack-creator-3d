@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Fab, Tooltip } from '@mui/material';
 import CropFreeIcon from '@mui/icons-material/CropFree';
 
@@ -47,6 +47,12 @@ export function CurveEditor() {
         const { min, max } = getCurveBoundingBox3(curveNodes);
         setPanZoom(getFitPanZoom(min.x, min.y, max.x, max.y, svg.clientWidth, svg.clientHeight, Math.max(...roadWidths)));
     }
+
+    // Fit to screen on the first load
+    useEffect(() => {
+        if (!svg) return;
+        fitToScreen();
+    }, [svg]);
 
     // Coordinates convertion
     const convertedNodes = useMemo(() => {
@@ -275,6 +281,7 @@ export function CurveEditor() {
                             <PointHandle
                                 className={`pos-xy-handle ${index === selectedNode ? 'selected' : ''}`}
                                 svgKey={`pos-xy-handle-${index}`}
+                                label={`${index + 1}`}
                                 origin={node.position}
                                 onMouseDown={(e) => onHandleDragStart(
                                     createPosXYHandle(index, setSelectedNode, updateNode), e)}

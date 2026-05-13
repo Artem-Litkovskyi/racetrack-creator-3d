@@ -74,7 +74,7 @@ export function NodeParamsSection() {
                         placeholder='0'
                         value={roadWidths[selectedNode]}
                         onChange={(e) => {
-                            setRoadWidth(selectedNode, Math.max(1, Number(e.target.value)))
+                            setRoadWidth(selectedNode, Math.max(0, Number(e.target.value)))
                         }}
                     />
                 </>

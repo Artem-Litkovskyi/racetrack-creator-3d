@@ -79,6 +79,11 @@ text {
   stroke: var(--tangent);
 }
 
+text.pos-xy-handle {
+  fill: var(--curve);
+  stroke-width: 0;
+}
+
 /* Tangent Handle */
 line.tangent-handle {
   stroke: var(--tangent);

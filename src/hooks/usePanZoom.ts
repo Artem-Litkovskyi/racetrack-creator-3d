@@ -5,7 +5,7 @@ export function usePanZoom(svg: SVGSVGElement | null, minZoom: number = 0.2, max
     const [panZoom, setPanZoom] = useState<PanZoom>({
         panX: 0,
         panY: 0,
-        zoom: 2,
+        zoom: 1,
     });
 
     // Pan with mouse button
