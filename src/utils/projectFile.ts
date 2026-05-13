@@ -16,7 +16,7 @@ const CurveNode3Schema = z.object({
 
 const ProjectDataSchema = z.object({
     closedPath: z.boolean(),
-    sideHeight: z.number(),
+    profileHeight: z.number(),
     curveNodes: z.array(CurveNode3Schema),
     roadWidths: z.array(z.number()),
 })
