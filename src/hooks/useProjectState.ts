@@ -22,26 +22,21 @@ export const DEFAULT_PROJECT_DATA: ProjectData = {
         {
             position: { x: -100, y: 0, z: 0 },
             tangentEnd1: { x: -170, y: 0, z: 0 },
-            tangentEnd2: { x: -50, y: 0, z: 0 },
-        },
-        {
-            position: { x: 0, y: 0, z: 0 },
-            tangentEnd1: { x: -50, y: 0, z: 0 },
-            tangentEnd2: { x: 50, y: 0, z: 0 },
+            tangentEnd2: { x: -10, y: 0, z: 0 },
         },
         {
             position: { x: 200, y: 0, z: 0 },
-            tangentEnd1: { x: 150, y: 0, z: 0 },
+            tangentEnd1: { x: 110, y: 0, z: 0 },
             tangentEnd2: { x: 250, y: 0, z: 0 },
         },
         {
             position: { x: 210, y: -60, z: 0 },
             tangentEnd1: { x: 250, y: -50, z: 0 },
-            tangentEnd2: { x: 170, y: -70, z: 0 },
+            tangentEnd2: { x: 130, y: -80, z: 0 },
         },
         {
             position: { x: -90, y: -130, z: 0 },
-            tangentEnd1: { x: -50, y: -120, z: 0 },
+            tangentEnd1: { x: -10, y: -110, z: 0 },
             tangentEnd2: { x: -210, y: -160, z: 0 },
         },
     ],

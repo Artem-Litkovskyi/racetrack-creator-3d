@@ -14,7 +14,11 @@ interface FilenameAndExtensionInputProps {
 export function FilenameAndExtensionInput(props: FilenameAndExtensionInputProps) {
     return (
         <FormGroup>
-            <FormLabel htmlFor={props.id} className='input-label'>{props.label}</FormLabel>
+            {props.label && (
+                <FormLabel htmlFor={props.id} className='input-label'>
+                    {props.label}
+                </FormLabel>
+            )}
 
             <HorizontalBoxWithGap>
                 <TextField

@@ -1,8 +1,8 @@
-import { InputAdornment, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
 import { PanelSection } from '../MuiWrappers.tsx';
+import { NumberInput } from '../inputs/NumberInput.tsx';
 import { Vec3Input } from '../inputs/Vec3Input.tsx';
-import { CustomInput } from '../inputs/CustomInput.tsx';
 
 import { useProjectContext } from '../../hooks/useProjectContext.ts';
 
@@ -50,31 +50,25 @@ export function NodeParamsSection() {
                         setValue={v => setNode(selectedNode, setCollinearTangentEnd3(node, 'tangentEnd2', v))}
                     />
 
-                    <CustomInput
+                    <NumberInput
                         id={'pitch-input'}
                         label='Pitch'
-                        type='number'
-                        placeholder='0'
-                        slotProps={{
-                            htmlInput: { min: -90, max: 90 },
-                            input: {
-                                endAdornment: <InputAdornment position='end'>°</InputAdornment>,
-                            },
-                        }}
+                        endAdornmentLabel='°'
+                        minValue={-89}
+                        maxValue={89}
                         value={getTangentPitch3(node)}
-                        onChange={(e) => {
-                            setNode(selectedNode, setCollinearTangentPitch3(node, Number(e.target.value)));
+                        setValue={(v) => {
+                            setNode(selectedNode, setCollinearTangentPitch3(node, v));
                         }}
                     />
 
-                    <CustomInput
+                    <NumberInput
                         id={'road-width-input'}
                         label='Road Width'
-                        type='number'
-                        placeholder='0'
+                        minValue={0}
                         value={roadWidths[selectedNode]}
-                        onChange={(e) => {
-                            setRoadWidth(selectedNode, Math.max(0, Number(e.target.value)))
+                        setValue={(v) => {
+                            setRoadWidth(selectedNode, v)
                         }}
                     />
                 </>

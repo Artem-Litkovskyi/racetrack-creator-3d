@@ -2,11 +2,11 @@ import { Button, Dialog, DialogActions, DialogTitle } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 import { DialogContentWithGap, DialogHeaderWithIcon } from '../MuiWrappers.tsx';
-import { CustomInput } from '../inputs/CustomInput.tsx';
+import { ColorPicker } from '../inputs/ColorPicker.tsx';
 import { FilenameAndExtensionInput } from '../inputs/FilenameAndExtensionInput.tsx';
+import { NumberInput } from '../inputs/NumberInput.tsx';
 
 import type { ExtensionType } from '../../utils/export.ts';
-import { ColorPicker } from '../inputs/ColorPicker.tsx';
 
 type ExportDialogProps = {
     filename: string;
@@ -40,19 +40,19 @@ export function ExportDialog(props: ExportDialogProps) {
             <DialogContentWithGap>
                 <FilenameAndExtensionInput
                     id={'export-filename-extension-input'}
-                    label='Filename and Format'
+                    label='Filename and Extension'
                     filename={props.filename} setFilename={props.setFilename}
                     extension={props.extension} setExtension={props.setExtension}
                 />
 
-                <CustomInput
+                <NumberInput
                     id={'export-resolution-input'}
                     label='Resolution (Cross-Sections per Curve Segment)'
-                    type='number'
-                    placeholder='0'
+                    minValue={5}
+                    maxValue={100}
+                    decimals={0}
                     value={props.resolution}
-                    onChange={(e) => props.setResolution(
-                        Math.max(5, Number(e.target.value)))}
+                    setValue={props.setResolution}
                 />
 
                 {props.extension === 'svg' && (

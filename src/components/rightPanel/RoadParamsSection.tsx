@@ -1,6 +1,6 @@
 import { Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { PanelSection } from '../MuiWrappers.tsx';
-import { CustomInput } from '../inputs/CustomInput.tsx';
+import { NumberInput } from '../inputs/NumberInput.tsx';
 import { useProjectContext } from '../../hooks/useProjectContext.ts';
 
 export function RoadParamsSection() {
@@ -24,14 +24,13 @@ export function RoadParamsSection() {
                 />}
             />
 
-            <CustomInput
+            <NumberInput
                 id={'profile-height-input'}
                 label='Profile Height'
-                type='number'
-                placeholder='0'
                 value={profileHeight}
-                onChange={(e) => {
-                    updateProject('profileHeight', Math.max(0, Number(e.target.value)))
+                minValue={0}
+                setValue={(v) => {
+                    updateProject('profileHeight', v)
                 }}
             />
         </PanelSection>

@@ -42,7 +42,12 @@ export function ColorPicker({ id, label = 'Color', value, onChange, disabled = f
 
     return (
         <FormGroup>
-            <FormLabel htmlFor={id} className='input-label'>{label}</FormLabel>
+            {label && (
+                <FormLabel htmlFor={id} className='input-label'>
+                    {label}
+                </FormLabel>
+            )}
+
             <TextField
                 id={id}
                 value={value}
