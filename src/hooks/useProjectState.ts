@@ -40,7 +40,7 @@ export const DEFAULT_PROJECT_DATA: ProjectData = {
             tangentEnd2: { x: -210, y: -160, z: 0 },
         },
     ],
-    roadWidths: [15,15,15,15,15]
+    roadWidths: [15,15,15,15]
 }
 
 export function useProjectState() {
