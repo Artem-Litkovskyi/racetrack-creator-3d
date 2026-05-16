@@ -1,3 +1,7 @@
+// geometry/curveNode.ts
+// Utility functions and types for curve control nodes used by the spline editor
+// This module provides immutable helpers to create and modify 3D curve nodes
+// including position, tangents and pitch-related operations.
 import { magnitude2, type Vec2 } from './vec2.ts';
 import { add3, diff3, magnitude3, normalize3, scale3, type Vec3 } from './vec3.ts';
 
@@ -13,6 +17,13 @@ export type CurveNode3 = {
     tangentEnd2: Vec3;
 }
 
+/**
+ * Create a new CurveNode3 with tangents initialized to the node position.
+ * This yields zero-length tangents; callers typically call makeCurveNodeValid3
+ * to ensure tangents have a reasonable magnitude.
+ * @param position - node position
+ * @returns new node with given position
+ */
 export function createCurveNode3(position: Vec3): CurveNode3 {
     return {
         position: position,
@@ -21,7 +32,13 @@ export function createCurveNode3(position: Vec3): CurveNode3 {
     };
 }
 
-// Position
+/**
+ * Sets a position of a node.
+ * Immutable: returns a new CurveNode3.
+ * @param node - source node
+ * @param position - new position
+ * @returns new node with given position
+ */
 export function setNodePosition3(node: CurveNode3, position: Vec3): CurveNode3 {
     const d = diff3(position, node.position);
 
@@ -32,6 +49,13 @@ export function setNodePosition3(node: CurveNode3, position: Vec3): CurveNode3 {
     };
 }
 
+/**
+ * Translate a node and its tangents by a delta vector.
+ * Immutable: returns a new CurveNode3.
+ * @param node - source node
+ * @param delta - translation vector
+ * @returns new node translated by delta
+ */
 export function changeNodePositionByDelta3(node: CurveNode3, delta: Vec3): CurveNode3 {
     return {
         position: add3(node.position, delta),
@@ -40,7 +64,16 @@ export function changeNodePositionByDelta3(node: CurveNode3, delta: Vec3): Curve
     };
 }
 
-// Tangent
+/**
+ * Set one tangent end and enforce collinearity for the opposite tangent.
+ * If `symmetric` is true the opposite tangent mirrors the new one; otherwise
+ * the opposite tangent preserves its magnitude but flips direction.
+ * @param node - source node
+ * @param tangentKey - which tangent to set ('tangentEnd1' or 'tangentEnd2')
+ * @param tangentValue - new world-space tangent end position
+ * @param symmetric - whether the opposite tangent should mirror the new one
+ * @returns new node with updated tangents
+ */
 export function setCollinearTangentEnd3(
     node: CurveNode3,
     tangentKey: 'tangentEnd1' | 'tangentEnd2',
@@ -63,6 +96,15 @@ export function setCollinearTangentEnd3(
     };
 }
 
+/**
+ * Adjust the XY components of a tangent by a delta while preserving/mirroring
+ * Z-magnitude to keep pitch sensible for screen-space drags.
+ * @param node - source node
+ * @param tangentKey - which tangent to change
+ * @param tangentDeltaXY - delta to add to the tangent's XY components
+ * @param symmetric - whether to symmetrically mirror the opposite tangent
+ * @returns new node with adjusted tangents
+ */
 export function changeCollinearTangentEndByDeltaXY3(
     node: CurveNode3,
     tangentKey: 'tangentEnd1' | 'tangentEnd2',
@@ -98,13 +140,23 @@ export function changeCollinearTangentEndByDeltaXY3(
     };
 }
 
-// Pitch
+/**
+ * Compute tangent pitch (degrees) of tangentEnd2 relative to the XY plane.
+ * @param node - source node
+ * @returns pitch in degrees
+ */
 export function getTangentPitch3(node: CurveNode3): number {
     const tangent2 = diff3(node.tangentEnd2, node.position);
     const mag2XY = magnitude3({ x: tangent2.x, y: tangent2.y, z: 0 });
     return Math.atan2(tangent2.z, mag2XY) / Math.PI * 180;
 }
 
+/**
+ * Set tangents to a specific pitch (elevation angle).
+ * @param node - source node
+ * @param pitch - pitch angle in degrees
+ * @returns new node with adjusted tangents
+ */
 export function setCollinearTangentPitch3(node: CurveNode3, pitch: number): CurveNode3 {
     const tangent2 = diff3(node.tangentEnd2, node.position);
     const mag2 = magnitude3(tangent2);
@@ -133,7 +185,14 @@ export function setCollinearTangentPitch3(node: CurveNode3, pitch: number): Curv
     };
 }
 
-// Other
+/**
+ * Ensure both tangents have at least `minMag` length. If both are too small
+ * a default opposing pair is created; if only one is small it is replaced by
+ * a direction based on the other.
+ * @param node - source node
+ * @param minMag - minimal tangent magnitude
+ * @returns new node with valid tangents
+ */
 export function makeCurveNodeValid3(node: CurveNode3, minMag: number = 5): CurveNode3 {
     const isZero1 = magnitude3(diff3(node.tangentEnd1, node.position)) < minMag;
     const isZero2 = magnitude3(diff3(node.tangentEnd2, node.position)) < minMag;
@@ -165,6 +224,12 @@ export function makeCurveNodeValid3(node: CurveNode3, minMag: number = 5): Curve
     return node;
 }
 
+/**
+ * Compute axis-aligned bounding box containing all node positions and control
+ * points.
+ * @param nodes - array of CurveNode3
+ * @returns object with `min` and `max` Vec3 corners
+ */
 export function getCurveBoundingBox3(nodes: CurveNode3[]): { min: Vec3, max: Vec3 } {
     let min = { x: Infinity, y: Infinity, z: Infinity };
     let max = { x: -Infinity, y: -Infinity, z: -Infinity };

@@ -1,3 +1,6 @@
+// geometry/frame3.ts
+// Sample 3D frames along cubic Bézier curve segments. Frames are used to
+// position and orient cross-sections for mesh sweep generation.
 import type { CurveNode3 } from './curveNode';
 import { cubicBezier, cubicBezier3, cubicBezierDerivative3 } from './bezier.ts';
 import { cross3, normalize3, scale3, type Vec3 } from './vec3';
@@ -9,6 +12,18 @@ export type Frame3 = {
     up: Vec3;
 }
 
+/**
+ * Sample frames along a 3D Bezier segment.
+ * The produced frames contain an orthonormal-like basis (forward, right, up)
+ * where `right` is scaled by the interpolated width.
+ * @param node1 - first control node
+ * @param node2 - second control node
+ * @param width1 - width at first node
+ * @param width2 - width at second node
+ * @param includeLast - whether to include the segment's last sample
+ * @param resolution - samples per segment
+ * @returns array of Frame3
+ */
 export function sampleCurveSegmentFrames3(
     node1: CurveNode3, node2: CurveNode3,
     width1: number, width2: number,
@@ -16,13 +31,21 @@ export function sampleCurveSegmentFrames3(
 ): Frame3[] {
     const axs: Frame3[] = [];
 
+    // Avoid duplicating the last frame between consecutive segments when
+    // includeLast is false.
     const steps = includeLast ? resolution : resolution - 1;
 
     for (let i = 0; i <= steps; i++) {
         const t = i / steps;
 
+        // Evaluate position and forward (normalized derivative)
         const position = cubicBezier3(node1.position, node1.tangentEnd2, node2.tangentEnd1, node2.position, t);
         const forward = normalize3(cubicBezierDerivative3(node1.position, node1.tangentEnd2, node2.tangentEnd1, node2.position, t));
+
+        // Build a stable right/up pair. Using world Z (0,0,1) as a reference
+        // reduces twist for mostly-horizontal curves. For vertical-forward
+        // vectors this method may produce degenerate right vectors; calling
+        // code should be robust to that case.
         const right = cross3({ x: 0, y: 0, z: 1 }, forward);
         const up = cross3(forward, right);
 
@@ -35,6 +58,15 @@ export function sampleCurveSegmentFrames3(
     return axs;
 }
 
+/**
+ * Sample frames for an entire curve by stitching segment frames.
+ * Handles open vs closed path cases similarly to the 2D sampler.
+ * @param curveNodes - array of CurveNode3 defining the curve
+ * @param curveWidths - array of widths matching curveNodes
+ * @param closedPath - whether the path is closed (loops back to first node)
+ * @param resolution - samples per segment
+ * @returns concatenated array of Frame3
+ */
 export function sampleCurveFrames3(
     curveNodes: CurveNode3[], curveWidths: number[],
     closedPath: boolean, resolution: number
