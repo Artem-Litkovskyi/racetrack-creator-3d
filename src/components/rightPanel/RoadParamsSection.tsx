@@ -28,7 +28,7 @@ export function RoadParamsSection() {
                 id={'profile-height-input'}
                 label='Profile Height'
                 value={profileHeight}
-                minValue={0}
+                minValue={0.1}
                 setValue={(v) => {
                     updateProject('profileHeight', v)
                 }}

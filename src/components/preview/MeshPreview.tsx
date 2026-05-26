@@ -12,7 +12,7 @@ export function MeshPreview({ vertices, indices, width = 400, height = 300 }: Pr
     const containerRef = useRef<HTMLDivElement | null>(null);
     const materialRef = useRef<THREE.MeshPhongMaterial | null>(null);
 
-    const [showWireframe, setShowWireframe] = useState(false);
+    const [showWireframe, setShowWireframe] = useState(true);
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -179,7 +179,7 @@ export function MeshPreview({ vertices, indices, width = 400, height = 300 }: Pr
                 height,
             }}
         >
-            <span>Preview</span>
+            <span>3D Preview</span>
             <div className='show-wireframe'>
                 <input
                     type='checkbox'

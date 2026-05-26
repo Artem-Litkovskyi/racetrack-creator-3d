@@ -65,7 +65,7 @@ export function NodeParamsSection() {
                     <NumberInput
                         id={'road-width-input'}
                         label='Road Width'
-                        minValue={0}
+                        minValue={1}
                         value={roadWidths[selectedNode]}
                         setValue={(v) => {
                             setRoadWidth(selectedNode, v)
