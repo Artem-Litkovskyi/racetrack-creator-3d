@@ -21,7 +21,9 @@
 - **Production-Ready Export**: Seamlessly export assets into standard 3D formats (**OBJ**, **GLTF/GLB**) or 2D vector layouts (**SVG**).
 - **Adaptive UI**: Fully optimized user interface featuring native Light and Dark mode themes.
 
-<img src="https://github.com/Artem-Litkovskyi/racetrack-creator-3d/blob/main/git-hub-export.png" width="40%" alt="Export dialog screenshot">
+<p align="center">
+    <img src="https://github.com/Artem-Litkovskyi/racetrack-creator-3d/blob/main/git-hub-export.png" width="40%" alt="Export dialog screenshot">
+</p>
 
 ## 💡 Mathematical Model
 
