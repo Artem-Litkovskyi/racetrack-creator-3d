@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { Button, Dialog, DialogActions, DialogTitle } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
@@ -5,6 +7,10 @@ import { DialogContentWithGap, DialogHeaderWithIcon } from '../MuiWrappers.tsx';
 import { ColorPicker } from '../inputs/ColorPicker.tsx';
 import { FilenameAndExtensionInput } from '../inputs/FilenameAndExtensionInput.tsx';
 import { NumberInput } from '../inputs/NumberInput.tsx';
+
+import { MeshPreview } from '../preview/MeshPreview.tsx';
+
+import { useProjectContext } from '../../hooks/useProjectContext.ts';
 
 import type { ExtensionType } from '../../utils/export.ts';
 
@@ -23,6 +29,13 @@ type ExportDialogProps = {
 }
 
 export function ExportDialog(props: ExportDialogProps) {
+    const projectContext = useProjectContext();
+
+    // noinspection com.intellij.reactbuddy.ExhaustiveDepsInspection
+    const { vertices, indices } = useMemo(() => (
+        projectContext.generateRoadMesh(props.resolution)
+    ), [props.open, props.resolution])
+
     return (
         <Dialog
             open={props.open}
@@ -62,6 +75,10 @@ export function ExportDialog(props: ExportDialogProps) {
                         value={props.roadColor}
                         onChange={props.setRoadColor}
                     />
+                )}
+
+                {props.extension !== 'svg' && (
+                    <MeshPreview vertices={vertices} indices={indices} width={348} height={250} />
                 )}
             </DialogContentWithGap>
 

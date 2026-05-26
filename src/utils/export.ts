@@ -33,7 +33,7 @@ export function createScene(vertices: number[], indices: number[]) {
     geometry.setIndex(indices);
     geometry.computeVertexNormals();
 
-    const material = new THREE.MeshMatcapMaterial();
+    const material = new THREE.MeshBasicMaterial();
     const mesh = new THREE.Mesh(geometry, material);
     const scene = new THREE.Scene();
 

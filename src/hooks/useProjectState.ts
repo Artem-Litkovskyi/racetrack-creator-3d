@@ -93,8 +93,28 @@ export function useProjectState() {
         extension: ExtensionType,
         resolution: number,
     ) => {
+        const { vertices, indices } = generateRoadMesh(resolution);
+
+        switch (extension) {
+            case 'obj':
+                exportToOBJ(vertices, indices, exportFilename);
+                break;
+            case 'gltf':
+                exportToGLTF(vertices, indices, exportFilename, false);
+                break;
+            case 'glb':
+                exportToGLTF(vertices, indices, exportFilename, true);
+                break;
+            default:
+                console.error(`Unsupported 3D export extension: ${extension}`);
+                break;
+        }
+    }
+
+    const generateRoadMesh = (resolution: number) => {
         const { profile, skipPolygonIdx } = generateRoadProfile(1, project.profileHeight);
-        const { vertices, indices } = generateSweepSurfaceMesh(project.curveNodes, project.roadWidths, profile, resolution, project.closedPath, skipPolygonIdx);
+        const { vertices, indices } = generateSweepSurfaceMesh(
+            project.curveNodes, project.roadWidths, profile, resolution, project.closedPath, skipPolygonIdx);
 
         const from = COORDINATE_SYSTEMS.editor;
         const to = COORDINATE_SYSTEMS.file;
@@ -103,20 +123,7 @@ export function useProjectState() {
             v, from.right, from.forward, from.up, to.right, to.forward, to.up)
         ).flatMap(v => [v.x, v.y, v.z]);
 
-        switch (extension) {
-            case 'obj':
-                exportToOBJ(convertedVertices, indices, exportFilename);
-                break;
-            case 'gltf':
-                exportToGLTF(convertedVertices, indices, exportFilename, false);
-                break;
-            case 'glb':
-                exportToGLTF(convertedVertices, indices, exportFilename, true);
-                break;
-            default:
-                console.error(`Unsupported 3D export extension: ${extension}`);
-                break;
-        }
+        return { vertices: convertedVertices, indices };
     }
 
     // Edit
@@ -211,6 +218,7 @@ export function useProjectState() {
         saveProject,
         exportProject2D,
         exportProject3D,
+        generateRoadMesh,
 
         updateProject,
         updateRoadWidth,

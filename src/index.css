@@ -12,6 +12,13 @@
 
   --pos-z: #42a5f5;
   --pitch: #ff9800;
+
+  --preview-background-color: #eeeeee;
+  --preview-mesh-color: #3c3c3c;
+  --preview-ambient-light-color: #83c4ea;
+  --preview-ambient-light-intensity: 0.25;
+  --preview-dir-light-color: #ffffff;
+  --preview-dir-light-intensity: 3;
 }
 
 [data-dark] {
@@ -27,6 +34,9 @@
 
   --pos-z: #32ace4;
   --pitch: #e8ac54;
+
+  --preview-background-color: #303030;
+  --preview-mesh-color: #e4e4e4;
 }
 
 /* Reset */
@@ -136,4 +146,27 @@ text.width-handle {
 .node-label {
   fill: var(--pos-z);
   font-weight: bold;
+}
+
+/* 3D Preview */
+.mesh-preview {
+  overflow: hidden;
+  position: relative;
+}
+
+.mesh-preview span {
+  position: absolute;
+  left: 10px;
+  top: 5px;
+}
+
+.show-wireframe {
+  position: absolute;
+  left: 5px;
+  bottom: 1px;
+}
+
+.show-wireframe label {
+  user-select: none;
+  margin-left: 5px;
 }
