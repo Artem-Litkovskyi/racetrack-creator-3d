@@ -1,75 +1,86 @@
-# React + TypeScript + Vite
+<h1 align="center">Racetrack Creator 3D</h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center">
+    A browser-based editor for designing racetracks and generating 3D road meshes.
+    <br>
+    <a align="center" href="https://racetrack-creator-3d.vercel.app">Explore the Live Demo</a>
+</p>
 
-Currently, two official plugins are available:
+![Racetrack Creator 3D editor](git-hub-banner.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📖 Project Overview
 
-## React Compiler
+**Racetrack Creator 3D** is a web-based procedural content generation (PCG) tool designed to streamline the creation of 3D racing circuits. Built entirely on frontend technologies, it allows designers and game developers to procedurally generate clean, game-ready road meshes from mathematical curves and export them directly into standard 3D pipelines.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### Key Features
 
-Note: This will impact Vite dev & build performances.
+- **Spline Editor**: Design complex, continuous circuit shapes using cubic Bézier control nodes.
+- **Dynamic Road Width**: Adjust the road width dynamically along the curve by setting individual width parameters per control node.
+- **3D Preview**: Inspection of the generated polygonal mesh prior to export.
+- **Robust Project Management**: Create, save, and resume work via JSON-based project files.
+- **Production-Ready Export**: Seamlessly export assets into standard 3D formats (**OBJ**, **GLTF/GLB**) or 2D vector layouts (**SVG**).
+- **Adaptive UI**: Fully optimized user interface featuring native Light and Dark mode themes.
 
-## Expanding the ESLint configuration
+<img src="https://github.com/Artem-Litkovskyi/racetrack-creator-3d/blob/main/git-hub-export.png" width="40%" alt="Export dialog screenshot">
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 💡 Mathematical Model
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The core of the mesh generation pipeline relies on a robust geometric framework that treats the track mesh as an approximation of a kinematic surface.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 1. Track Trajectory (Bézier Splines)
+The track centerline is modeled using parametric cubic Bézier curve. This provides geometric continuity ($G^2$ or $C^2$), ensuring smooth transitions through corners and elevation changes.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 2. Mesh Generation (Sweep Surface & Affine Transformations)
+The system implements a **Sweep Surface** method:
+- A predefined cross-section (the road profile) is swept along the parametric path.
+- For each step along the path, a local coordinate frame is calculated using the curve's position and tangent vectors.
+- An **affine transformation matrix** is constructed to translate and rotate the profile to match the calculated frame and to scale its width.
+
+## 🛠 Tech Stack
+
+- **React** with **TypeScript**
+- **Vite** for development and production builds
+- **Material UI** for the interface
+- **Three.js** for mesh preview and export
+- **Zod** for project file validation
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 20+ recommended
+- `npm` (bundled with Node.js)
+
+### Installation
+
+1. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+2. **Start the development server**
+
+   ```bash
+   npm run dev
+   ```
+
+3. **Open the app**
+
+    - Local app: [http://localhost:5173/](http://localhost:5173/)
+
+### Useful Commands
+
+```bash
+npm run build
+npm run preview
+npm run lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🕹️ Usage Workflow
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **Initialize:** Start fresh or import an existing `.json` track configuration file.
+- **Shape Layout:** Manipulate the control points and tangents in the editor viewport.
+- **Refine Profiles:** Select individual nodes to fine-tune local properties like road width, elevation, and pitch.
+- **Export to 3D:** Save the generated polygons as a `.obj` or `.gltf`/`.glb` asset directly into game engines (Unity, Unreal, Godot) or DCC tools (Blender, Maya).
+- **Export to 2D:** Save the track as a `.svg` image, that can be used as a minimap in a game.
